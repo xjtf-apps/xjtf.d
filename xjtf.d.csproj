@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<ServerGarbageCollection>true</ServerGarbageCollection>
+		<UserSecretsId>dotnet-xjtf.d-bc0bce0f-2146-4f3f-a3e1-097c0169a423</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.8" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
+		<PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.6" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="System.Management.Automation" Version="7.2.6" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Seq.Extensions.Logging" Version="6.1.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\xjtf.lib\xjtf.lib.csproj" />
+		<ProjectReference Include="..\xjtf.threads\xjtf.threads.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="xjtf.d.db">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+</Project>
