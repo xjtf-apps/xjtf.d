@@ -1,6 +1,6 @@
 namespace xjtf.d;
 
-[Authorize]
+[Authorize][EnableCors]
 public class ServiceMonitorController : ControllerBase
 {
     private readonly MonitorClutch _clutch;

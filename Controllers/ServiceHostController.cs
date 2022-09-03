@@ -1,6 +1,6 @@
 namespace xjtf.d;
 
-[Authorize]
+[Authorize][EnableCors]
 public class ServiceHostController : ControllerBase
 {
     private readonly ServiceStore _serviceStore;

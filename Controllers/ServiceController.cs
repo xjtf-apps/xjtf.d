@@ -1,6 +1,6 @@
 namespace xjtf.d;
 
-[Authorize]
+[Authorize][EnableCors]
 public class ServiceController : ControllerBase
 {
     private readonly DaemonDbContext _dbContext;

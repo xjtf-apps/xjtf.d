@@ -1,3 +1,5 @@
+using Swashbuckle.AspNetCore.SwaggerGen;
+
 namespace xjtf.d;
 
 public class Program
@@ -35,15 +37,19 @@ public class Program
             builder.Services.AddSingleton<CommandRunnerFactory>();
             builder.Services.AddTransient<GetServicesWorker>();
             builder.Services.AddHostedService<MonitorWorker>();
+            builder.Services.AddSwaggerGen(SwaggerGenOptions);
             builder.Services.AddTransient<GetServiceWorker>();
             builder.Services.AddSingleton<MonitorService>();
+            builder.Services.AddCors(opt =>
+            {
+                opt.AddDefaultPolicy(builder => builder.WithOrigins("http://localhost:3000"));
+            });
             builder.Services.AddSingleton<MonitorResults>();
             builder.Services.AddSingleton<MonitorClutch>();
             builder.Services.AddTransient<ServiceStore>();
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSingleton(Restartable);
             builder.Services.AddSingleton<Init>();
-            builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
@@ -104,5 +110,33 @@ public class Program
             ValidateLifetime = false,
             ValidateIssuerSigningKey = true
         };
+    };
+
+    private static Action<SwaggerGenOptions> SwaggerGenOptions = (opt) =>
+    {
+        opt.SwaggerDoc("v1", new OpenApiInfo { Title = "xjtf.d API", Version = "v1" });
+        opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            Description = "Please enter a valid token"
+        });
+        opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type=ReferenceType.SecurityScheme,
+                        Id="Bearer"
+                    }
+                },
+                new string[]{}
+            }
+        });
     };
 }

@@ -1,6 +1,6 @@
 namespace xjtf.d;
 
-[Authorize]
+[Authorize][EnableCors]
 public class DaemonController : Controller
 {
     private readonly Restartable _restartable;
