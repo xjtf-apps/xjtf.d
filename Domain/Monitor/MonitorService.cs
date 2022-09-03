@@ -2,11 +2,11 @@ using System.Collections;
 
 namespace xjtf.d;
 
-public class MonitorDataService
+public class MonitorService
 {
     private readonly CommandRunnerFactory _commandRunnerFactory;
 
-    public MonitorDataService(CommandRunnerFactory commandRunnerFactory)
+    public MonitorService(CommandRunnerFactory commandRunnerFactory)
     {
         _commandRunnerFactory = commandRunnerFactory;
     }

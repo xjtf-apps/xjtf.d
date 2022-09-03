@@ -1,6 +1,6 @@
 namespace xjtf.d;
 
-internal static class ServiceTimeseriesExstensions
+internal static class ServiceTimeseriesExtensions
 {
     public static ServiceTimeseries.DataPoint FromData(string status, DateTimeOffset observed)
     {
