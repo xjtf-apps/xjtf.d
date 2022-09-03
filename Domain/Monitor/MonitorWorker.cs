@@ -2,6 +2,7 @@ namespace xjtf.d;
 
 public class MonitorWorker : BackgroundService, IDisposable
 {
+    private readonly MonitorClutch _clutch;
     private readonly MonitorResults _results;
     private readonly DaemonDbContext _dbContext;
     private readonly MonitorDataService _dataService;
@@ -9,11 +10,13 @@ public class MonitorWorker : BackgroundService, IDisposable
     public MonitorWorker
     (
         Init _,
+        MonitorClutch clutch,
         MonitorResults results,
         DaemonDbContext dbContext,
         MonitorDataService dataService
     )
     {
+        _clutch = clutch;
         _results = results;
         _dbContext = dbContext;
         _dataService = dataService;
@@ -25,12 +28,14 @@ public class MonitorWorker : BackgroundService, IDisposable
         {
             while (true)
             {
-                var stopwatch = new Stopwatch(); stopwatch.Start();
-                var observation = await _dataService.ObserveServicesAsync();
-                if (observation != null)
+                if (_clutch.State == MonitorClutchState.Attached)
                 {
-                    await StoreObservation(observation, DateTimeOffset.Now);
-                    SetObservationResults(observation);
+                    var observation = await _dataService.ObserveServicesAsync();
+                    if (observation != null)
+                    {
+                        await StoreObservation(observation, DateTimeOffset.Now);
+                        SetObservationResults(observation);
+                    }
                 }
                 await Task.Delay(60_000);
             }
