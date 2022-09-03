@@ -1,19 +1,12 @@
 namespace xjtf.d;
-
 #pragma warning disable CS8618
 public class DaemonDbContext : IdentityDbContext<IdentityUser>
 {
+    public string ConnectionString { get; internal init; }
     public DbSet<ServiceControl> ServiceControls { get; set; }
     public DbSet<ServiceObservation> ServiceObservations { get; set; }
 
-    public string ConnectionString { get; private init; }
-
-    public DaemonDbContext(IHostEnvironment hostEnvironment)
-    {
-        var currentFolder = hostEnvironment.ContentRootPath;
-        var databaseFile = Path.Join(currentFolder, "xjtf.d.db");
-        ConnectionString = $"Data Source={databaseFile}";
-    }
+    public DaemonDbContext(string connectionString) => ConnectionString = connectionString;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {

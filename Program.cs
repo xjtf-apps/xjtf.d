@@ -20,17 +20,23 @@ public class Program
                 opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(JwtOptions);
+            builder.Services.AddTransient<DaemonDbContext>(provider =>
+            {
+                var factory = provider.GetRequiredService<DaemonDbContextFactory>();
+                var instance = factory.GetNew();
+                return instance;
+            });
             builder.Services.AddLogging(builder => builder.AddSeq(SeqConfig));
             builder.Services.AddMvc(opt => opt.EnableEndpointRouting = false);
             builder.Services.AddSingleton<CommandRunnerRestAdapterFactory>();
             builder.Services.AddTransient<ServiceTimeseriesAggregator>();
             builder.Services.AddTransient<CommandRunnerRestAdapter>();
+            builder.Services.AddSingleton<DaemonDbContextFactory>();
             builder.Services.AddSingleton<CommandRunnerFactory>();
-            builder.Services.AddSingleton<MonitorDataService>();
             builder.Services.AddTransient<GetServicesWorker>();
             builder.Services.AddHostedService<MonitorWorker>();
             builder.Services.AddTransient<GetServiceWorker>();
-            builder.Services.AddSingleton<DaemonDbContext>();
+            builder.Services.AddSingleton<MonitorService>();
             builder.Services.AddSingleton<MonitorResults>();
             builder.Services.AddSingleton<MonitorClutch>();
             builder.Services.AddTransient<ServiceStore>();

@@ -5,7 +5,7 @@ public class MonitorWorker : BackgroundService, IDisposable
     private readonly MonitorClutch _clutch;
     private readonly MonitorResults _results;
     private readonly DaemonDbContext _dbContext;
-    private readonly MonitorDataService _dataService;
+    private readonly MonitorService _service;
     
     public MonitorWorker
     (
@@ -13,13 +13,13 @@ public class MonitorWorker : BackgroundService, IDisposable
         MonitorClutch clutch,
         MonitorResults results,
         DaemonDbContext dbContext,
-        MonitorDataService dataService
+        MonitorService service,
     )
     {
         _clutch = clutch;
         _results = results;
         _dbContext = dbContext;
-        _dataService = dataService;
+        _service = service;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -30,7 +30,7 @@ public class MonitorWorker : BackgroundService, IDisposable
             {
                 if (_clutch.State == MonitorClutchState.Attached)
                 {
-                    var observation = await _dataService.ObserveServicesAsync();
+                    var observation = await _service.ObserveServicesAsync();
                     if (observation != null)
                     {
                         await StoreObservation(observation, DateTimeOffset.Now);
