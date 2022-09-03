@@ -1,5 +1,6 @@
 namespace xjtf.d;
 
+[Authorize]
 public class DaemonController : Controller
 {
     private readonly Restartable _restartable;
@@ -18,13 +19,13 @@ public class DaemonController : Controller
         _applicationLifetime = applicationLifetime;
     }
 
-    [Route("/Daemon/Status")] [HttpGet]
+    [Route("/Daemon/Status")][HttpGet]
     public IActionResult GetStatus()
     {
         return Ok(CalculateStatus());
     }
 
-    [Route("/Daemon/Reload")] [HttpGet]
+    [Route("/Daemon/Reload")][HttpGet]
     public IActionResult ReloadApp(int? timeout = null)
     {
         _logger.LogInformation("Received reload request. Reloading...");
@@ -37,7 +38,7 @@ public class DaemonController : Controller
         return Ok(timeout);
     }
 
-    [Route("/Daemon/Shutdown")] [HttpGet]
+    [Route("/Daemon/Shutdown")][HttpGet]
     public IActionResult ShutdownApp(int? timeout = null)
     {
         _logger.LogInformation("Received shutdown request. Shuting down...");
