@@ -32,6 +32,7 @@ public class Program
             builder.Services.AddTransient<GetServiceWorker>();
             builder.Services.AddSingleton<DaemonDbContext>();
             builder.Services.AddSingleton<MonitorResults>();
+            builder.Services.AddSingleton<MonitorClutch>();
             builder.Services.AddTransient<ServiceStore>();
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSingleton(Restartable);
