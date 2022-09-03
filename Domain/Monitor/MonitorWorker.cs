@@ -12,8 +12,8 @@ public class MonitorWorker : BackgroundService, IDisposable
         Init _,
         MonitorClutch clutch,
         MonitorResults results,
-        DaemonDbContext dbContext,
         MonitorService service,
+        DaemonDbContext dbContext
     )
     {
         _clutch = clutch;
