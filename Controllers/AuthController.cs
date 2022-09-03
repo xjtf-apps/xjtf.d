@@ -5,8 +5,8 @@ public class AuthController : ControllerBase
     private readonly DaemonDbContext _dbContext;
     public AuthController(DaemonDbContext dbContext) => _dbContext = dbContext;
 
-    [AllowAnonymous][HttpPost][Route("/Login")]
-    public async Task<IActionResult> LoginAsync([FromForm] string username, [FromForm] string passwordHash)
+    [AllowAnonymous][HttpGet][Route("/Login")]
+    public async Task<IActionResult> LoginAsync(string username, string passwordHash)
     {
         var user = await _dbContext.Users
             .FirstOrDefaultAsync(u => u.UserName == username && u.PasswordHash == passwordHash);
