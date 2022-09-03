@@ -3,6 +3,7 @@ namespace xjtf.d;
 [Authorize]
 public class ServiceMonitorController : ControllerBase
 {
+    private readonly MonitorClutch _clutch;
     private readonly DaemonDbContext _dbContext;
     private readonly GetServiceWorker _getServiceWorker;
     private readonly GetServicesWorker _getServicesWorker;
@@ -11,6 +12,7 @@ public class ServiceMonitorController : ControllerBase
 
     public ServiceMonitorController
     (
+        MonitorClutch clutch,
         DaemonDbContext dbContext,
         GetServiceWorker getServiceWorker,
         GetServicesWorker getServicesWorker,
@@ -18,6 +20,7 @@ public class ServiceMonitorController : ControllerBase
         ServiceTimeseriesAggregator timeseriesAggregator
     )
     {
+        _clutch = clutch;
         _dbContext = dbContext;
         _commandRunner = commandRunner;
         _getServiceWorker = getServiceWorker;
@@ -28,8 +31,13 @@ public class ServiceMonitorController : ControllerBase
     [Route("/Monitor/{toggle}")][HttpGet]
     public IActionResult ToggleMonitor(bool toggle)
     {
-        // TODO: toggle monitor attached/detached
-        return Ok();
+        var state = toggle
+            ? MonitorClutchState.Attached
+            : MonitorClutchState.Detached;
+        
+        _clutch.State = state;
+        
+        return new JsonResult(new { State = toggle });
     }
 
     [Route("/Monitor/Services")][HttpGet]
