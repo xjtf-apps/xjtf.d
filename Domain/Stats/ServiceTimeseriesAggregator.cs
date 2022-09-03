@@ -30,7 +30,7 @@ public class ServiceTimeseriesAggregator
             .ToListAsync();
         
         return ServiceTimeseries.FromData(serviceControl.ServiceName,
-            observations.Select(o => ServiceTimeseriesExstensions.FromData(o.Status, o.Observed)));
+            observations.Select(o => ServiceTimeseriesExtensions.FromData(o.Status, o.Observed)));
     }
 
     private async Task<ServiceTimeseries> GenerateUncontrolledServiceReportAsync(string serviceName)
@@ -41,6 +41,6 @@ public class ServiceTimeseriesAggregator
             .ToListAsync();
 
         return ServiceTimeseries.FromData(serviceName,
-            observations.Select(o => ServiceTimeseriesExstensions.FromData(o.Status, o.Observed)));
+            observations.Select(o => ServiceTimeseriesExtensions.FromData(o.Status, o.Observed)));
     }
 }

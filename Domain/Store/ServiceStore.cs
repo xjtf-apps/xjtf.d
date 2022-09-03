@@ -68,7 +68,6 @@ public class ServiceStore
             var container = _storage;
             var separator = Path.DirectorySeparatorChar;
             var names = filename.Split(separator);
-            var sname = names[^1];
 
             foreach (var parent in names[..^1])
             {
