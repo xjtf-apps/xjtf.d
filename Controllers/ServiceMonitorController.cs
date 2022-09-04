@@ -55,6 +55,9 @@ public class ServiceMonitorController : ControllerBase
     [Route("/Monitor/Service/{serviceName}/Stats")][HttpGet]
     public async Task<IActionResult> GetServiceStats(string serviceName)
     {
+        // TODO: cache service stats so that a
+        //       digest can be retrieved when getting the/all service/s
+
         return new JsonResult(await _timeseriesAggregator.GenerateReportAsync(serviceName));
     }
 
