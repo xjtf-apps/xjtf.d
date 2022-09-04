@@ -42,7 +42,12 @@ public class Program
             builder.Services.AddSingleton<MonitorService>();
             builder.Services.AddCors(opt =>
             {
-                opt.AddDefaultPolicy(builder => builder.WithOrigins("http://localhost:3000"));
+                opt.AddDefaultPolicy(builder => 
+                {
+                    builder.WithOrigins("http://localhost:3000");
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
+                });
             });
             builder.Services.AddSingleton<MonitorResults>();
             builder.Services.AddSingleton<MonitorClutch>();
