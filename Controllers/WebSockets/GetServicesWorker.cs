@@ -2,9 +2,9 @@ namespace xjtf.d;
 
 public class GetServicesWorker
 {
-    private readonly CommandRunnerRestAdapterFactory _commandRunnerFactory;
+    private readonly CommandRunnerRestAdapter _commandRunner;
 
-    public GetServicesWorker(CommandRunnerRestAdapterFactory commandRunnerFactory) => _commandRunnerFactory = commandRunnerFactory;
+    public GetServicesWorker(CommandRunnerRestAdapter commandRunnery) => _commandRunner = commandRunnery;
 
     public async Task ConfigureLongRunningTask(HttpContext httpContext)
     {
@@ -50,8 +50,7 @@ public class GetServicesWorker
     {
         var command = Command.GetServices;
         var commandArgs = new CommandArgs();
-        var commandRunner = _commandRunnerFactory.GetNew();
-        var commandResult = await commandRunner.RunAsync(command, commandArgs);
+        var commandResult = await _commandRunner.RunAsync((command, commandArgs));
 
         var commandResultSerialized =
             JsonSerializer.Serialize(commandResult.Value);

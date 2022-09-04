@@ -4,9 +4,9 @@ public class GetServiceWorker
 {
     public string? ServiceName { get; private set; }
 
-    private readonly CommandRunnerRestAdapterFactory _commandRunnerFactory;
+    private readonly CommandRunnerRestAdapter _commandRunner;
 
-    public GetServiceWorker(CommandRunnerRestAdapterFactory commandRunnerFactory) => _commandRunnerFactory = commandRunnerFactory;
+    public GetServiceWorker(CommandRunnerRestAdapter commandRunner) => _commandRunner = commandRunner;
 
     public async Task ConfigureLongRunningTask(HttpContext httpContext, string serviceName)
     {
@@ -53,8 +53,7 @@ public class GetServiceWorker
     {
         var command = Command.GetService;
         var commandArgs = new CommandArgs(ServiceName);
-        var commandRunner = _commandRunnerFactory.GetNew();
-        var commandResult = await commandRunner.RunAsync(command, commandArgs);
+        var commandResult = await _commandRunner.RunAsync((command, commandArgs));
 
         var commandResultSerialized =
             JsonSerializer.Serialize(commandResult.Value);

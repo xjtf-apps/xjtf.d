@@ -4,6 +4,7 @@ public class DaemonDbContext : IdentityDbContext<IdentityUser>
 {
     public string ConnectionString { get; internal init; }
     public DbSet<ServiceControl> ServiceControls { get; set; }
+    public DbSet<ServiceStatistic> ServiceStatistics { get; set; }
     public DbSet<ServiceObservation> ServiceObservations { get; set; }
 
     public DaemonDbContext(string connectionString) => ConnectionString = connectionString;
@@ -21,6 +22,14 @@ public class ServiceObservation
     public string ServiceName { get; set; }
     public ServiceControl? ControlledInfo { get; set; }
     public string Status { get; set; }
+}
+
+public class ServiceStatistic
+{
+    public int Id { get; set; }
+    public string ServiceName { get; set; }
+    public float MeanUptime { get; set; }
+    public DateTimeOffset Measured { get; set; }
 }
 
 public class ServiceControl

@@ -8,6 +8,7 @@ public class ServiceMonitorController : ControllerBase
     private readonly GetServiceWorker _getServiceWorker;
     private readonly GetServicesWorker _getServicesWorker;
     private readonly CommandRunnerRestAdapter _commandRunner;
+    private readonly ServiceStatsTransformer _statsTransformer;
     private readonly ServiceTimeseriesAggregator _timeseriesAggregator;
 
     public ServiceMonitorController
@@ -17,6 +18,7 @@ public class ServiceMonitorController : ControllerBase
         GetServiceWorker getServiceWorker,
         GetServicesWorker getServicesWorker,
         CommandRunnerRestAdapter commandRunner,
+        ServiceStatsTransformer statsTransformer,
         ServiceTimeseriesAggregator timeseriesAggregator
     )
     {
@@ -24,6 +26,7 @@ public class ServiceMonitorController : ControllerBase
         _dbContext = dbContext;
         _commandRunner = commandRunner;
         _getServiceWorker = getServiceWorker;
+        _statsTransformer = statsTransformer;
         _getServicesWorker = getServicesWorker;
         _timeseriesAggregator = timeseriesAggregator;
     }
@@ -43,13 +46,13 @@ public class ServiceMonitorController : ControllerBase
     [Route("/Monitor/Services")][HttpGet]
     public async Task<IActionResult> GetServices()
     {
-        return await _commandRunner.RunAsync(Command.GetServices, new CommandArgs());
+        return await _commandRunner.RunAsync((Command.GetServices, new CommandArgs()), _statsTransformer);
     }
 
     [Route("/Monitor/Service/{serviceName}")][HttpGet]
     public async Task<IActionResult> GetService(string serviceName)
     {
-        return await _commandRunner.RunAsync(Command.GetService, new CommandArgs(serviceName));
+        return await _commandRunner.RunAsync((Command.GetService, new CommandArgs(serviceName)), _statsTransformer);
     }
 
     [Route("/Monitor/Service/{serviceName}/Stats")][HttpGet]

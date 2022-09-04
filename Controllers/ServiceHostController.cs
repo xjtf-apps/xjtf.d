@@ -25,7 +25,7 @@ public class ServiceHostController : ControllerBase
         {
             var installFolder = store.InstallFolder;
             var commandArgs = installData.Value.CommandArgsBuilder(installFolder);
-            return await _commandRunner.RunAsync(Command.InstallService, commandArgs);
+            return await _commandRunner.RunAsync((Command.InstallService, commandArgs));
         }
         else return BadRequest();
     }

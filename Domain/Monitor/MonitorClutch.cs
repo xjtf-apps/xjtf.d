@@ -35,7 +35,7 @@ public class MonitorClutch
         }
     }
     
-    public MonitorClutch() : this(MonitorClutchState.Attached) { }
+    public MonitorClutch() : this(MonitorClutchState.Detached) { }
     public MonitorClutch(MonitorClutchState state) => _state = state;
 }
 
