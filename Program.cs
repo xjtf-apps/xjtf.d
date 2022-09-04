@@ -69,6 +69,7 @@ public class Program
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseWebSockets();
+            app.UseCors();
             app.UseMvc();
             return app;
         };
