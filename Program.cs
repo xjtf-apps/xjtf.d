@@ -30,9 +30,9 @@ public class Program
             });
             builder.Services.AddLogging(builder => builder.AddSeq(SeqConfig));
             builder.Services.AddMvc(opt => opt.EnableEndpointRouting = false);
-            builder.Services.AddSingleton<CommandRunnerRestAdapterFactory>();
             builder.Services.AddTransient<ServiceTimeseriesAggregator>();
             builder.Services.AddTransient<CommandRunnerRestAdapter>();
+            builder.Services.AddTransient<ServiceStatsTransformer>();
             builder.Services.AddSingleton<DaemonDbContextFactory>();
             builder.Services.AddSingleton<CommandRunnerFactory>();
             builder.Services.AddTransient<GetServicesWorker>();
@@ -40,6 +40,7 @@ public class Program
             builder.Services.AddSwaggerGen(SwaggerGenOptions);
             builder.Services.AddTransient<GetServiceWorker>();
             builder.Services.AddSingleton<MonitorService>();
+            builder.Services.AddTransient<CommandRunner>();
             builder.Services.AddCors(opt =>
             {
                 opt.AddDefaultPolicy(builder => 

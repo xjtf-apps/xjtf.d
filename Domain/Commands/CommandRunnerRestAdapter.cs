@@ -1,61 +1,38 @@
 namespace xjtf.d;
 
-public sealed class CommandRunnerRestAdapter
+public sealed class CommandRunnerRestAdapter : ICommandResultTransformer<JsonResult>
 {
-    private readonly CommandRunnerFactory _runnerFactory;
-    public CommandRunner BaseCommandRunner => _runnerFactory.GetNew();
-    public CommandRunnerRestAdapter(CommandRunnerFactory runnerFactory) => _runnerFactory = runnerFactory;
+    private readonly CommandRunner _commandRunner;
 
-    public async Task<JsonResult> RunAsync(Command cmd, CommandArgs args)
+    public CommandRunnerRestAdapter(CommandRunner commandRunner) => _commandRunner = commandRunner;
+
+    public async Task<object> RunAsync(string base64String, ICommandResultTransformer? resultTransformer = null)
     {
-        var commandTask = BaseCommandRunner.RunAsync((cmd, args));
-        await commandTask.WaitAsync(CancellationToken.None);
-        if (commandTask.IsFaulted)
-            return new JsonResult(commandTask.Exception!.Message);
-
-        return new JsonResult(MapResult(commandTask.Result));
+        var commandObject = CommandPayload.Unwrap(base64String);
+        if (commandObject != null)
+            return await RunAsync(CommandObject: commandObject, resultTransformer);
+        else
+            throw new ArgumentException("Command could not be read");
     }
 
-    #region json serialization
-    private static JsonResult MapResult(object result)
+    public async Task<JsonResult> RunAsync((Command CommandType, CommandArgs CommandArguments)? CommandObject, ICommandResultTransformer? resultTransformer = null)
     {
-        if (result is string str_result)
-            return new JsonResult(str_result);
+        var finalTransformer = this as ICommandResultTransformer<JsonResult>;
+        var intermediateTransformer = resultTransformer ?? ICommandResultTransformer.Default;
+        var composedTransformer = ICommandResultTransformer.Composer(intermediateTransformer, finalTransformer);
 
-        if (result is IEnumerable<object> results)
-            return new JsonResult(results.Select(r => MapResult(r)).ToArray());
-        
-        if (result is PSObject ps_result)
-        {
-            var obj = new ExpandoObject();
-            var obj_dict = (IDictionary<String,Object>)obj!;
-            var members = ps_result.Members
-                .Where(m => Members.Contains(m.Name))
-                .Select(m => new { Name = m.Name, Value = m.Value })
-                .Where(m => m.Value != null)
-                .ToList();
-
-            members.ForEach(m => obj_dict.Add(m.Name, m.Value));
-            return new JsonResult(obj);
-        }
-        return new JsonResult(new {});
+        return (JsonResult)await _commandRunner.RunAsync(CommandObject, composedTransformer);
     }
+    
+    #region result transformer
 
-    private static HashSet<string> Members = new()
-    {
-        "UserName",
-        "Description",
-        "DelayedAutoStart",
-        "BinaryPathName",
-        "StartupType",
-        "ServiceName",
-        "CanPauseAndContinue",
-        "CanShutdown",
-        "CanStop",
-        "DisplayName",
-        "StartType",
-        "Status",
-        "ServiceType",
-    };
+    JsonResult ICommandResultTransformer<JsonResult>.RunTransform(object commandResult)
+        =>
+            new JsonResult(commandResult);
+
+    object ICommandResultTransformer.RunTransform(object commandResult)
+        =>
+            ((ICommandResultTransformer<JsonResult>)this).RunTransform(commandResult);
+
     #endregion
 }

@@ -16,9 +16,9 @@ public class ServiceTimeseriesAggregator
             .OrderByDescending(control => control.Created)
             .FirstOrDefault();
 
-        return newestControl != null
+        return await PipeSavedReportData(newestControl != null
             ? await GenerateControlledServiceReportAsync(newestControl)
-            : await GenerateUncontrolledServiceReportAsync(serviceName);
+            : await GenerateUncontrolledServiceReportAsync(serviceName));
     }
 
     private async Task<ServiceTimeseries> GenerateControlledServiceReportAsync(ServiceControl serviceControl)
@@ -42,5 +42,17 @@ public class ServiceTimeseriesAggregator
 
         return ServiceTimeseries.FromData(serviceName,
             observations.Select(o => ServiceTimeseriesExtensions.FromData(o.Status, o.Observed)));
+    }
+
+    private async Task<ServiceTimeseries> PipeSavedReportData(ServiceTimeseries timeseries)
+    {
+        await _dbContext.ServiceStatistics.AddAsync(new ServiceStatistic()
+        {
+            ServiceName = timeseries.ServiceName,
+            Measured = DateTimeOffset.Now,
+            MeanUptime = timeseries.Mean
+        });
+        await _dbContext.SaveChangesAsync();
+        return timeseries;
     }
 }

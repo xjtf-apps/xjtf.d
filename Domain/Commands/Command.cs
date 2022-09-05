@@ -20,6 +20,26 @@ public enum CommandExpectedResult
     ServiceControllerArray
 }
 
+public static class CommandExpectedResult_
+{
+    public static HashSet<string> ServiceObjectMembers = new()
+    {
+        "UserName",
+        "Description",
+        "DelayedAutoStart",
+        "BinaryPathName",
+        "StartupType",
+        "ServiceName",
+        "CanPauseAndContinue",
+        "CanShutdown",
+        "CanStop",
+        "DisplayName",
+        "StartType",
+        "Status",
+        "ServiceType"
+    };
+}
+
 public static class CommandResults
 {
     public static CommandExpectedResult ByType(Command cmdType) => cmdType switch

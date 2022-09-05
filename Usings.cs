@@ -9,6 +9,7 @@ global using System.Dynamic;
 global using System.Text.Json;
 global using System.Reflection;
 global using System.Diagnostics;
+global using System.Collections;
 global using System.ServiceProcess;
 global using System.Net.WebSockets;
 global using System.Security.Claims;

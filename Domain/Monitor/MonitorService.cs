@@ -16,7 +16,7 @@ public class MonitorService
         var commandArgs = new CommandArgs();
         var results = new ServicesObservation();
         var commandRunner = _commandRunnerFactory.GetNew();
-        var services = (List<object>)await commandRunner.RunAsync((Command.GetServices, commandArgs));
+        var services = (object[])await commandRunner.RunAsync((Command.GetServices, commandArgs));
 
         foreach (var service in services)
         {
