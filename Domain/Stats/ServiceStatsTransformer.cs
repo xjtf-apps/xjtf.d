@@ -14,25 +14,25 @@ public class ServiceStatsTransformer : ICommandResultTransformer
         if (commandResult is IEnumerable<object> enb_commandResult)
             return enb_commandResult.Select(o => RunTransform(o)).ToArray();
 
-        if (commandResult is IDictionary<String,Object> obj_commandResult)
+        if (commandResult is IDictionary<string, object> obj_commandResult)
         {
             if (obj_commandResult.ContainsKey("ServiceName"))
             {
                 var serviceName = (string)obj_commandResult["ServiceName"];
                 var serviceStat = (_dbContext.ServiceStatistics
-                    .Where(s => s.ServiceName == serviceName))
-                    .ToList()
+                    .Where(s => s.ServiceName == serviceName)).ToList()
                     .OrderByDescending(s => s.Measured)
                     .FirstOrDefault();
 
                 if (serviceStat != null)
-                    obj_commandResult.Add("Mean", serviceStat.MeanUptime);
+                {
+                    var statsObject = new ExpandoObject() as IDictionary<string, object>;
+                    statsObject.Add("Reported", serviceStat.Measured);
+                    statsObject.Add("Mean", serviceStat.MeanUptime);
+                    obj_commandResult.Add("Stats", statsObject);
+                }
             }
         }
         return commandResult;
     }
-
-    object ICommandResultTransformer.RunTransform(object commandResult) => RunTransform(commandResult);
-    public async Task<object> RunTransformAsync(Task<object> commandResult) => RunTransform(await commandResult);
-    async Task<object> ICommandResultTransformer.RunTransformAsync(Task<object> commandResult) => await RunTransformAsync(commandResult);
 }

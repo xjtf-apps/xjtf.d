@@ -17,7 +17,7 @@ public class CommandRunner : ICommandResultTransformer
         var cmd = CommandObject!.Value.CommandType;
         var args = CommandObject!.Value.CommandArguments;
         var transformer =
-            (ICommandResultTransformer)(CommandRunner)this;
+            (ICommandResultTransformer)this;
             
         if (resultTransformer != null)
             transformer = ICommandResultTransformer.Composer(transformer, resultTransformer);
@@ -71,10 +71,10 @@ public class CommandRunner : ICommandResultTransformer
         if (commandResult is PSObject pso_result)
         {
             var obj = new ExpandoObject();
-            var dict = obj as IDictionary<String,Object>;
+            var dict = obj as IDictionary<string, object>;
             pso_result.Members
-                .Where(m => ServiceObjectMembers.Contains(m.Name))
-                .Select(m => new { Name = m.Name, Value = m.Value })
+                .Where(m => CommandExpectedResult_.ServiceObjectMembers.Contains(m.Name))
+                .Select(m => new { m.Name, m.Value })
                 .Where(m => m.Value != null).ToList()
                 .ForEach(m => dict.Add(m.Name, m.Value));
 
@@ -82,28 +82,6 @@ public class CommandRunner : ICommandResultTransformer
         }
         throw new InvalidOperationException();
     }
-
-    async Task<object> ICommandResultTransformer.RunTransformAsync(Task<object> commandResult)
-    {
-        return ((ICommandResultTransformer)this).RunTransform(await commandResult);
-    }
-
-    private static HashSet<string> ServiceObjectMembers = new()
-    {
-        "UserName",
-        "Description",
-        "DelayedAutoStart",
-        "BinaryPathName",
-        "StartupType",
-        "ServiceName",
-        "CanPauseAndContinue",
-        "CanShutdown",
-        "CanStop",
-        "DisplayName",
-        "StartType",
-        "Status",
-        "ServiceType"
-    };
 }
 
 [System.Serializable]

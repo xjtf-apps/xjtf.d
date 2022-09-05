@@ -29,15 +29,10 @@ public sealed class CommandRunnerRestAdapter : ICommandResultTransformer<JsonRes
     JsonResult ICommandResultTransformer<JsonResult>.RunTransform(object commandResult)
         =>
             new JsonResult(commandResult);
-    async Task<JsonResult> ICommandResultTransformer<JsonResult>.RunTransformAsync(Task<object> commandResult)
-         =>
-            ((ICommandResultTransformer<JsonResult>)this).RunTransform(await commandResult);
+
     object ICommandResultTransformer.RunTransform(object commandResult)
         =>
             ((ICommandResultTransformer<JsonResult>)this).RunTransform(commandResult);
-    async Task<object> ICommandResultTransformer.RunTransformAsync(Task<object> commandResult)
-        =>
-            await ((ICommandResultTransformer<JsonResult>)this).RunTransformAsync(commandResult);
 
     #endregion
 }

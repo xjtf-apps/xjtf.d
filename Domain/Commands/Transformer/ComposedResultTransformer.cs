@@ -19,9 +19,4 @@ public class ComposedResultTransformer : ICommandResultTransformer
     {
         return SecondTransformer.RunTransform(FirstTransformer.RunTransform(commandResult));
     }
-
-    public async Task<object> RunTransformAsync(Task<object> commandResult)
-    {
-        return await SecondTransformer.RunTransformAsync(FirstTransformer.RunTransformAsync(commandResult));
-    }
 }
