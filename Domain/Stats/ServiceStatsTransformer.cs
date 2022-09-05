@@ -4,8 +4,18 @@ public class ServiceStatsTransformer : ICommandResultTransformer
 {
     private readonly DaemonDbContext _dbContext;
 
+    /// <summary>
+    /// Transforms the command results of commands returning service information
+    /// by enriching the returned PowerShell data with some latest stats about the resource(s).
+    /// </summary>
+    /// <param name="dbContext"></param>
     public ServiceStatsTransformer(DaemonDbContext dbContext) => _dbContext = dbContext;
 
+    /// <summary>
+    /// Performs the enrichment of service data by matching with related data from the database.
+    /// </summary>
+    /// <param name="commandResult"></param>
+    /// <returns></returns>
     public object RunTransform(object commandResult)
     {
         if (commandResult is string str_commandResult)
