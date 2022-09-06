@@ -7,6 +7,8 @@ public class DaemonDbContext : IdentityDbContext<IdentityUser>
     public DbSet<ServiceStatistic> ServiceStatistics { get; set; }
     public DbSet<ServiceObservation> ServiceObservations { get; set; }
 
+    public DbSet<AuditLogEntry> AuditLogEntries { get; set; }
+
     public DaemonDbContext(string connectionString) => ConnectionString = connectionString;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -39,5 +41,18 @@ public class ServiceControl
     public bool StoreBased { get; set; }
     public DateTimeOffset Created { get; set; }
     public DateTimeOffset? Deleted { get; set; }
+}
+
+public class AuditLogEntry
+{
+    public int Id { get; set; }
+
+    public string Subject { get; set; }
+    public string Verb { get; set; }
+    public string Object { get; set; }
+    public string? EventKey { get; set; }
+
+    public string Source { get; set; }
+    public DateTimeOffset Created { get; set; }
 }
 #pragma warning restore CS8618

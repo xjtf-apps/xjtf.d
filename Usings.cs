@@ -13,10 +13,14 @@ global using System.Collections;
 global using System.ServiceProcess;
 global using System.Net.WebSockets;
 global using System.Security.Claims;
+global using System.Security.Principal;
 global using System.Management.Automation;
 global using System.Security.Cryptography;
+global using System.Collections.Concurrent;
 global using System.Text.Json.Serialization;
 global using System.IdentityModel.Tokens.Jwt;
+global using System.Diagnostics.CodeAnalysis;
+global using System.Runtime.CompilerServices;
 
 global using Microsoft.OpenApi.Models;
 global using Microsoft.EntityFrameworkCore;

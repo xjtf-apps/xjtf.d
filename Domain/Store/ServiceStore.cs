@@ -1,6 +1,6 @@
 namespace xjtf.d;
 
-public class ServiceStore
+public sealed partial class ServiceStore
 {
     private DirectoryInfo StorageRoot
     {
@@ -8,7 +8,7 @@ public class ServiceStore
         {
             var localFolderRef = Environment.SpecialFolder.LocalApplicationData;
             var localFolder = Environment.GetFolderPath(localFolderRef);
-            var storePath = Path.Combine(localFolder, "Store");
+            var storePath = Path.Combine(localFolder, "xjtf.d", "Store");
             var root = new DirectoryInfo(storePath);
 
             if (!root.Exists)
@@ -28,62 +28,40 @@ public class ServiceStore
         }
     }
 
-    public bool ExistsStore(string serviceName) => this[serviceName].Exists;
-    public void CreateStore(string serviceName) => this[serviceName].Create();
-    public StorageUnit AccessStore(string servicename) => new StorageUnit(this, servicename);
+    public bool ExistsStore(string serviceName)
+        =>
+            this[serviceName].ExistsStorageUnit();
+    
+    public void CreateStore(string serviceName)
+        =>
+            this[serviceName].CreateStorageUnit();
 
-    public class StorageUnit
+    public ServiceStorageUnit AccessStore(string servicename)
+        =>
+            new ServiceStorageUnit(this, servicename);
+    
+    public ServiceStoreDescriptor[] EnumerateStores()
     {
-        private readonly DirectoryInfo _storage;
-        public string InstallFolder => _storage.FullName;
-        public bool Empty => _storage.EnumerateFileSystemInfos().Count() > 0;
+        var root = StorageRoot;
+        var rootName = root.FullName;
+        var rootEnumOptions = new EnumerationOptions() { RecurseSubdirectories = false };
+        var storeEnumOptions = new EnumerationOptions() { RecurseSubdirectories = true };
+        var rootStores = root.EnumerateDirectories("*", rootEnumOptions).Where(d => d.ExistsStorageUnit());
 
-        internal StorageUnit(ServiceStore serviceStore, string serviceName)
+        return rootStores.Select(store => new ServiceStoreDescriptor()
         {
-            if (!serviceStore.ExistsStore(serviceName))
-                serviceStore.CreateStore(serviceName);
-
-            _storage = serviceStore[serviceName];
-        }
-
-        public IEnumerable<string> EnumerateContents()
-        {
-            return _storage.EnumerateFiles("*", new EnumerationOptions() {
-                RecurseSubdirectories = true
-            })
-            .Select(f => f.FullName);
-        }
-
-        public async Task AddFormFilesAsync(IEnumerable<IFormFile> formfiles)
-        {
-            await Task.WhenAll(formfiles.Select(ff => Task.Run(() => {
-                var filename = ff.FileName;
-                var filestream = ff.OpenReadStream();
-                return AddFileAsync(filename, filestream);
-            })));
-        }
-
-        public async Task AddFileAsync(string filename, Stream filestream)
-        {
-            var container = _storage;
-            var separator = Path.DirectorySeparatorChar;
-            var names = filename.Split(separator);
-
-            foreach (var parent in names[..^1])
-            {
-                var containerPath = Path.Combine(container.FullName, parent);
-                container = new DirectoryInfo(containerPath);
-                if (!container.Exists) container.Create();
-            }
-
-            using var writer = File.OpenWrite(filename);
-            await filestream.CopyToAsync(writer);
-        }
-
-        public void Clear()
-        {
-            _storage.Delete(recursive: true);
-            _storage.Create();
-        }
+            StoreName = store.Name,
+            StoreUniqueIdentifier = store.GetServiceTagValue()?.ToString() ?? Guid.Empty.ToString(),
+            StoreFilesCount = store
+                .EnumerateFiles("*", storeEnumOptions)
+                .Where(ServiceStoreExtensions.IsNotServiceTag)
+                .Count(),
+            StoreSizeBytes = store
+                .EnumerateFiles("*", storeEnumOptions)
+                .Where(ServiceStoreExtensions.IsNotServiceTag)
+                .Select(f => f.Length)
+                .Aggregate((a, b) => a + b)
+        })
+        .ToArray();
     }
 }

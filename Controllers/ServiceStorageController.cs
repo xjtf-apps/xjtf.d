@@ -14,6 +14,12 @@ public class ServiceStorageController : ControllerBase
         _serviceStore = serviceStore;
     }
 
+    [Route("/Store/Browse")][HttpGet]
+    public IActionResult Browse()
+    {
+        return new JsonResult(_serviceStore.EnumerateStores());
+    }
+
     [Route("/Store/Service/Upload/{serviceName}")][HttpPost]
     public async Task<IActionResult> UploadServiceAsync(List<IFormFile> serviceFiles, string serviceName)
     {
