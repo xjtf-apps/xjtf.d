@@ -28,6 +28,10 @@ public sealed partial class ServiceStore
         }
     }
 
+    internal string StorageRootName
+        =>
+            StorageRoot.FullName;
+
     public bool ExistsStore(string serviceName)
         =>
             this[serviceName].ExistsStorageUnit();

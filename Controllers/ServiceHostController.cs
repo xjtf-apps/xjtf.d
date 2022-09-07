@@ -100,7 +100,7 @@ public static class InstallServiceExtension
             return new CommandArgs
             (
                 installRequest.ServiceName,
-                $"'{installFolder}\\{binaryPathName}'",
+                $"'{installFolder}{Path.DirectorySeparatorChar}{binaryPathName}'",
                 installRequest.DisplayName,
                 installRequest.Description,
                 installRequest.StartupType

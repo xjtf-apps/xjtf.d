@@ -33,6 +33,7 @@ public class Program
             builder.Services.AddTransient<ServiceTimeseriesAggregator>();
             builder.Services.AddTransient<CommandRunnerRestAdapter>();
             builder.Services.AddTransient<ServiceStatsTransformer>();
+            builder.Services.AddTransient<ServiceHostTransformer>();
             builder.Services.AddSingleton<DaemonDbContextFactory>();
             builder.Services.AddSingleton<CommandRunnerFactory>();
             builder.Services.AddTransient<GetServicesWorker>();

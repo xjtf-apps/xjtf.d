@@ -4,27 +4,35 @@ namespace xjtf.d;
 public class ServiceMonitorController : BaseController
 {
     private readonly MonitorClutch _clutch;
-    private readonly DaemonDbContext _dbContext;
     private readonly GetServiceWorker _getServiceWorker;
     private readonly GetServicesWorker _getServicesWorker;
     private readonly CommandRunnerRestAdapter _commandRunner;
+    private readonly ServiceHostTransformer _hostTransformer;
     private readonly ServiceStatsTransformer _statsTransformer;
     private readonly ServiceTimeseriesAggregator _timeseriesAggregator;
+
+    private ICommandResultTransformer Transformer
+    {
+        get
+        {
+            return ICommandResultTransformer.Composer(_statsTransformer, _hostTransformer);
+        }
+    }
 
     public ServiceMonitorController
     (
         MonitorClutch clutch,
-        DaemonDbContext dbContext,
         GetServiceWorker getServiceWorker,
         GetServicesWorker getServicesWorker,
         CommandRunnerRestAdapter commandRunner,
+        ServiceHostTransformer hostTransformer,
         ServiceStatsTransformer statsTransformer,
         ServiceTimeseriesAggregator timeseriesAggregator
     )
     {
         _clutch = clutch;
-        _dbContext = dbContext;
         _commandRunner = commandRunner;
+        _hostTransformer = hostTransformer;
         _getServiceWorker = getServiceWorker;
         _statsTransformer = statsTransformer;
         _getServicesWorker = getServicesWorker;
@@ -46,13 +54,13 @@ public class ServiceMonitorController : BaseController
     [Route("/Monitor/Services")][HttpGet]
     public async Task<IActionResult> GetServices()
     {
-        return await _commandRunner.RunAsync((Command.GetServices, new CommandArgs()), _statsTransformer);
+        return await _commandRunner.RunAsync((Command.GetServices, new CommandArgs()), Transformer);
     }
 
     [Route("/Monitor/Service/{serviceName}")][HttpGet]
     public async Task<IActionResult> GetService(string serviceName)
     {
-        return await _commandRunner.RunAsync((Command.GetService, new CommandArgs(serviceName)), _statsTransformer);
+        return await _commandRunner.RunAsync((Command.GetService, new CommandArgs(serviceName)), Transformer);
     }
 
     [Route("/Monitor/Service/Stats/{serviceName}")][HttpGet]

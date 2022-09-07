@@ -54,12 +54,14 @@ public class DaemonController : BaseController
     private object CalculateStatus()
     {
         var now = DateTime.Now;
+        var os = Environment.OSVersion.Platform.ToString();
         var uptime = now - Process.GetCurrentProcess().StartTime;
         var version = Assembly.GetEntryAssembly()!.GetName().Version;
 
         return new {
             uptime = uptime.TotalSeconds,
-            version = version
+            version = version,
+            system = os
         };
     }
 }
