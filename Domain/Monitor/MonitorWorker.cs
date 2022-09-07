@@ -34,6 +34,7 @@ public class MonitorWorker : BackgroundService, IDisposable
                     if (observation != null)
                     {
                         await StoreObservation(observation, DateTimeOffset.Now);
+                        AuditLogWriter.Instance.Persist(_dbContext);
                         SetObservationResults(observation);
                     }
                 }

@@ -5,7 +5,7 @@ public sealed class AuditLogWriter
     private AuditLogWriter() {}
     private static readonly ConcurrentQueue<QueableItem> _writeItems = new();
     internal static readonly AuditLogWriter Instance = new();
-    internal static void Queue(params QueableItem[] items)
+    internal void Queue(params QueableItem[] items)
     {
         items.AsParallel().ForAll(item =>
         {
@@ -13,7 +13,7 @@ public sealed class AuditLogWriter
         });
     }
 
-    internal static void Persist(DaemonDbContext dbContext, int n = 100)
+    internal void Persist(DaemonDbContext dbContext, int n = 100)
     {
         if (n < 0)
             throw new ArgumentOutOfRangeException(nameof(n));

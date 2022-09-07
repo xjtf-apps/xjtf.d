@@ -1,14 +1,13 @@
 namespace xjtf.d;
 
 [Authorize][EnableCors]
-public class ServiceStorageController : ControllerBase
+public class ServiceStorageController : BaseController
 {
     private readonly ServiceStore _serviceStore;
 
     public ServiceStorageController
     (
-        ServiceStore serviceStore,
-        CommandRunnerRestAdapter commandRunner
+        ServiceStore serviceStore
     )
     {
         _serviceStore = serviceStore;
@@ -29,8 +28,9 @@ public class ServiceStorageController : ControllerBase
             await store.AddFormFilesAsync(serviceFiles);
         }
         else return BadRequest();
-
-        return Created($"/Store/Browse/{serviceName}", serviceName);
+        var route = $"/Store/Browse/{serviceName}";
+        AuditServiceUpload(route, serviceName);
+        return Created(route, serviceName);
     }
 
     [Route("/Store/Service/Browse/{serviceName}")][HttpGet]
@@ -51,9 +51,34 @@ public class ServiceStorageController : ControllerBase
         if (!store.Empty)
         {
             // TODO: stop service, detach monitor
+            AuditServiceDelete(serviceName);
             store.Clear();
             return Ok();
         }
         else return BadRequest(); 
     }
+
+    #region audit methods
+    private void AuditServiceUpload(string route, string serviceName)
+    {
+        Auditor.LogEntry(AuditLogWriter, new AuditRecord()
+        {
+            Subject = AuditSubjectUser,
+            Verb = AuditVerbs.Storage.ServiceUploaded,
+            Object = $"Entity({serviceName}), HttpResource({route})",
+            EventKey = AuditEventKeys.Area.Store
+        });
+    }
+
+    private void AuditServiceDelete(string serviceName)
+    {
+        Auditor.LogEntry(AuditLogWriter, new AuditRecord()
+        {
+            Subject = AuditSubjectUser,
+            Verb = AuditVerbs.Storage.ServiceDeleted,
+            Object = $"Entity({serviceName})",
+            EventKey = AuditEventKeys.Area.Store
+        });
+    }
+    #endregion
 }

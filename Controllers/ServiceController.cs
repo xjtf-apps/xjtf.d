@@ -1,7 +1,7 @@
 namespace xjtf.d;
 
 [Authorize][EnableCors]
-public class ServiceController : ControllerBase
+public class ServiceController : BaseController
 {
     private readonly DaemonDbContext _dbContext;
     private readonly CommandRunnerRestAdapter _commandRunner;

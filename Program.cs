@@ -39,6 +39,7 @@ public class Program
             builder.Services.AddHostedService<MonitorWorker>();
             builder.Services.AddSwaggerGen(SwaggerGenOptions);
             builder.Services.AddTransient<GetServiceWorker>();
+            builder.Services.AddHostedService<AuditWorker>();
             builder.Services.AddSingleton<MonitorService>();
             builder.Services.AddTransient<CommandRunner>();
             builder.Services.AddCors(opt =>

@@ -1,7 +1,7 @@
 namespace xjtf.d;
 
 [Authorize][EnableCors]
-public class ServiceHostController : ControllerBase
+public class ServiceHostController : BaseController
 {
     private readonly ServiceStore _serviceStore;
     private readonly CommandRunnerRestAdapter _commandRunner;
@@ -25,9 +25,31 @@ public class ServiceHostController : ControllerBase
         {
             var installFolder = store.InstallFolder;
             var commandArgs = installData.Value.CommandArgsBuilder(installFolder);
-            return await _commandRunner.RunAsync((Command.InstallService, commandArgs));
+            var result = await _commandRunner
+                .RunAsync((Command.InstallService, commandArgs))
+                .ContinueWith(async installServiceTask =>
+                {
+                    var installServiceResponse = await installServiceTask;
+                    AuditServiceInstall(installServiceResponse, installRequest);
+                    return installServiceResponse;
+                });
+            return await result;
         }
         else return BadRequest();
+    }
+
+    private void AuditServiceInstall(JsonResult installServiceResponse, InstallServiceRequest installRequest)
+    {
+        dynamic? responseData = installServiceResponse.Value;
+        if (responseData == null || responseData?.ServiceName == null) return;
+
+        Auditor.LogEntry(AuditLogWriter, new AuditRecord()
+        {
+            Subject = AuditSubjectUser,
+            Verb = AuditVerbs.Host.ServiceInstalled,
+            Object = $"Entity({installRequest.ServiceName ?? installRequest.StoreName})",
+            EventKey = AuditEventKeys.Area.Host
+        });
     }
 }
 

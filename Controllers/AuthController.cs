@@ -1,7 +1,7 @@
 namespace xjtf.d;
 
 [EnableCors]
-public class AuthController : ControllerBase
+public class AuthController : BaseController
 {
     private readonly DaemonDbContext _dbContext;
     public AuthController(DaemonDbContext dbContext) => _dbContext = dbContext;

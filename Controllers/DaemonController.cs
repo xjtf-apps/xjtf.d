@@ -1,7 +1,7 @@
 namespace xjtf.d;
 
 [Authorize][EnableCors]
-public class DaemonController : Controller
+public class DaemonController : BaseController
 {
     private readonly Restartable _restartable;
     private readonly ILogger<DaemonController> _logger;

@@ -1,7 +1,7 @@
 namespace xjtf.d;
 
 [Authorize][EnableCors]
-public class ServiceMonitorController : ControllerBase
+public class ServiceMonitorController : BaseController
 {
     private readonly MonitorClutch _clutch;
     private readonly DaemonDbContext _dbContext;
