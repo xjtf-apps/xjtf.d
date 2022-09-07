@@ -23,7 +23,7 @@ public sealed partial class ServiceStore
                 RecurseSubdirectories = true
             })
             .Where(ServiceStoreExtensions.IsNotServiceTag)
-            .Select(f => f.FullName.Replace(InstallFolder, ""));
+            .Select(f => f.FullName.Replace($"{InstallFolder}{Path.DirectorySeparatorChar}", ""));
         }
 
         public async Task AddFormFilesAsync(IEnumerable<IFormFile> formfiles)
