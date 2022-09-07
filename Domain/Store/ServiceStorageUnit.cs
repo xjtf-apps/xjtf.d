@@ -18,11 +18,12 @@ public sealed partial class ServiceStore
 
         public IEnumerable<string> EnumerateContents()
         {
-            return _storage.EnumerateFiles("*", new EnumerationOptions() {
+            return _storage.EnumerateFiles("*", new EnumerationOptions()
+            {
                 RecurseSubdirectories = true
             })
             .Where(ServiceStoreExtensions.IsNotServiceTag)
-            .Select(f => f.FullName);
+            .Select(f => f.FullName.Replace(InstallFolder, ""));
         }
 
         public async Task AddFormFilesAsync(IEnumerable<IFormFile> formfiles)

@@ -60,7 +60,7 @@ public sealed partial class ServiceStore
                 .EnumerateFiles("*", storeEnumOptions)
                 .Where(ServiceStoreExtensions.IsNotServiceTag)
                 .Select(f => f.Length)
-                .Aggregate((a, b) => a + b)
+                .Aggregate(0L, (a, b) => a + b)
         })
         .ToArray();
     }
