@@ -2,6 +2,21 @@ namespace xjtf.d;
 
 public class ServiceHostTransformer : ICommandResultTransformer
 {
+
+    private IEnumerable<string>? _hostedFilesCache;
+    private IEnumerable<string> _hostedFiles
+    {
+        get
+        {
+            if (_hostedFilesCache == null)
+            {
+                _hostedFilesCache = Directory
+                    .EnumerateFiles(_serviceStore.StorageRootName, "*", SearchOption.AllDirectories);
+            }
+            return _hostedFilesCache;
+        }
+    }
+
     private readonly ServiceStore _serviceStore;
     /// <summary>
     /// Transforms the command results of commands returning service information
@@ -26,9 +41,10 @@ public class ServiceHostTransformer : ICommandResultTransformer
         {
             if (obj_commandResult.ContainsKey("BinaryPathName"))
             {
+                // TODO: this is slow, hosted service should ideally be identifiable by a database record
+
                 var serviceBinaryPathName = (string)obj_commandResult["BinaryPathName"];
-                var serviceDaemonManaged = Directory
-                    .EnumerateFiles(_serviceStore.StorageRootName, "*", SearchOption.AllDirectories)
+                var serviceDaemonManaged = _hostedFiles
                     .Where(f => f.Contains(serviceBinaryPathName))
                     .Any();
 
