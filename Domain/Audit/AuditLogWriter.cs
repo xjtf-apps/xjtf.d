@@ -2,7 +2,7 @@ namespace xjtf.d;
 
 public sealed class AuditLogWriter
 {
-    private AuditLogWriter() {}
+    private AuditLogWriter() { }
     private static readonly ConcurrentQueue<QueableItem> _writeItems = new();
     internal static readonly AuditLogWriter Instance = new();
     internal void Queue(params QueableItem[] items)
@@ -18,19 +18,25 @@ public sealed class AuditLogWriter
         if (n < 0)
             throw new ArgumentOutOfRangeException(nameof(n));
 
-        var items =
-            _writeItems.Take(n).ToArray().Select(item => new AuditLogEntry()
-            {
-                Subject = item.AuditRecord.Subject,
-                Verb = item.AuditRecord.Verb,
-                Object = item.AuditRecord.Object,
-                EventKey = item.AuditRecord.EventKey,
+        var countActual = _writeItems.Count;
+        var countToProcess = Math.Min(countActual, n);
 
-                Created = item.Queued,
-                Source = item.Source
-            });
+        for (int i = 0; i < countToProcess; i++)
+        {
+            var item = null as QueableItem;
+            while (!_writeItems.TryDequeue(out item)) Thread.SpinWait(100);
+            if (item != null)
+                dbContext.AuditLogEntries.Add(new AuditLogEntry()
+                {
+                    Subject = item.AuditRecord.Subject,
+                    Verb = item.AuditRecord.Verb,
+                    Object = item.AuditRecord.Object,
+                    EventKey = item.AuditRecord.EventKey,
 
-        dbContext.AuditLogEntries.AddRange(items);
+                    Created = item.Queued,
+                    Source = item.Source
+                });
+        }
         dbContext.SaveChanges();
     }
 

@@ -9,8 +9,8 @@ public class BaseController : ControllerBase
         get
         {
             var user = HttpContext.User;
-            var userSubject = user.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
-            var userActionSource = userSubject ?? "Anonymous user";
+            var userSubject = user?.Claims.FirstOrDefault(c => c.Type.Contains("nameidentifier"))?.Value;
+            var userActionSource = userSubject != null ? $"Username({userSubject})" : "Anonymous";
 
             return userActionSource;
         }
