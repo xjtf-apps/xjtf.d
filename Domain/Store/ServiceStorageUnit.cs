@@ -16,19 +16,27 @@ public sealed partial class ServiceStore
             _storage = serviceStore[serviceName];
         }
 
-        public IEnumerable<string> EnumerateContents()
+        public IEnumerable<dynamic> EnumerateContents()
         {
-            return _storage.EnumerateFiles("*", new EnumerationOptions()
+            string SanitizePath(string path)
+                => path.Replace($"{InstallFolder}{Path.DirectorySeparatorChar}", "");
+
+            var enumOptions = new EnumerationOptions() { RecurseSubdirectories = true };
+            return _storage.EnumerateFileSystemInfos("*", enumOptions)
+            .Where(ServiceStoreExtensions.IsNotServiceTag_)
+            .Select(fsi => new
             {
-                RecurseSubdirectories = true
-            })
-            .Where(ServiceStoreExtensions.IsNotServiceTag)
-            .Select(f => f.FullName.Replace($"{InstallFolder}{Path.DirectorySeparatorChar}", ""));
+                Name = fsi.Name,
+                Fullpath = SanitizePath(fsi.FullName),
+                Length = fsi is FileInfo fi ? fi.Length : -1,
+                Type = fsi is DirectoryInfo ? "directory" : "file"
+            });
         }
 
         public async Task AddFormFilesAsync(IEnumerable<IFormFile> formfiles)
         {
-            await Task.WhenAll(formfiles.Select(ff => Task.Run(() => {
+            await Task.WhenAll(formfiles.Select(ff => Task.Run(() =>
+            {
                 var filename = ff.FileName;
                 var filestream = ff.OpenReadStream();
                 return AddFileAsync(filename, filestream);

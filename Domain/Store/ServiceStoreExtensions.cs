@@ -15,6 +15,12 @@ public static class ServiceStoreExtensions
         => file.Name != ServiceTagFilename;
 
     /// <summary>
+    /// Checks that the fs entry is not a service store dotfile.
+    /// </summary>
+    public static readonly Func<FileSystemInfo, bool> IsNotServiceTag_ = (fsi)
+        => fsi is DirectoryInfo || (fsi is FileInfo fi && IsNotServiceTag(fi));
+
+    /// <summary>
     /// Tries to read the service store's unique id from the service dotfile.
     /// </summary>
     public static Guid? GetServiceTagValue(this DirectoryInfo serviceStore)
