@@ -47,7 +47,7 @@ public class StatsWorker : BackgroundService, IDisposable
                     workScheduler.Run(workSchedulerCancellation);
                 }
                 
-                await Task.Delay(60 * 60 * 60 * 1000);
+                await Task.Delay(60 * 60 * 1000);
             }
         });
         await task.WaitAsync(stoppingToken);
