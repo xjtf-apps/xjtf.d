@@ -16,6 +16,8 @@ public class DaemonDbContextFactory
 
     public static string DecideConnectionString(IHostEnvironment hostEnvironment)
     {
+        // TODO: db must be moved to AppData
+
         var currentFolder = hostEnvironment.ContentRootPath;
         var databaseFile = Path.Join(currentFolder, "xjtf.d.db");
         var connectionString = $"Data Source={databaseFile}";
