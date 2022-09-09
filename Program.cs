@@ -48,7 +48,7 @@ public class Program
             {
                 opt.AddDefaultPolicy(builder => 
                 {
-                    builder.WithOrigins("http://localhost:3000", "http://xjtf.d.localhost:3000");
+                    builder.WithOrigins("http://localhost:3000", "http://localhost:5000", "http://xjtf.d.localhost:3000");
                     builder.AllowAnyHeader();
                     builder.AllowAnyMethod();
                 });
@@ -72,6 +72,7 @@ public class Program
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseStaticFiles();
             app.UseWebSockets();
             app.UseCors();
             app.UseMvc();

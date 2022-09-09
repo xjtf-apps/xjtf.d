@@ -7,6 +7,7 @@
 		<TargetFramework>net7.0-windows</TargetFramework>
 		<ServerGarbageCollection>true</ServerGarbageCollection>
 		<UserSecretsId>dotnet-xjtf.d-bc0bce0f-2146-4f3f-a3e1-097c0169a423</UserSecretsId>
+		<Configurations>Debug;Release;Debug-WithFrontend</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -48,4 +49,12 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\" />
+	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="if $(Configuration)==Debug-WithFrontend powershell .\build.ps1" />
+	</Target>
 </Project>
