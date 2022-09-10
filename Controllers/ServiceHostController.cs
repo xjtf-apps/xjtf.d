@@ -31,9 +31,9 @@ public class ServiceHostController : BaseController
                 {
                     if (installServiceTask.Exception == null)
                     {
-                    var installServiceResponse = await installServiceTask;
+                        var installServiceResponse = await installServiceTask;
                         AuditServiceInstall(installRequest);
-                    return installServiceResponse;
+                        return installServiceResponse;
                     }
                     return new JsonResult(new { error = installServiceTask.Exception.ToString() });
                 });
