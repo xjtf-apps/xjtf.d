@@ -50,7 +50,7 @@ public static class CommandResults
         Command.StartService     => CommandExpectedResult.NoObject,
         Command.StopService      => CommandExpectedResult.NoObject,
         Command.RestartService   => CommandExpectedResult.NoObject,
-        Command.InstallService   => CommandExpectedResult.ServiceController,
+        Command.InstallService   => CommandExpectedResult.NoObject,
         Command.UninstallService => CommandExpectedResult.NoObject,
 
         _ => throw new NotSupportedException("Command not supported")

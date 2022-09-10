@@ -40,6 +40,16 @@ public static class CommandObject
                 script = $"Restart-Service -Name {serviceName}";
                 break;
             }
+            case Command.InstallService:
+            {
+                var serviceName = args[0];
+                var binaryPathName = args[1];
+                var displayName = args[2] ?? serviceName;
+                var description = args[3] ?? "";
+                var startupType = args[4]!.ToString();
+                script = $"New-Service -Name '{serviceName}' -BinaryPathName '{binaryPathName}' -DisplayName '{displayName}' -Description '{description}' -StartupType '{startupType}'";
+                break;
+            }
             default:
                 throw new NotSupportedException("Command not supported");
         }

@@ -41,7 +41,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\xjtf.lib\xjtf.lib.csproj" />
-		<ProjectReference Include="..\xjtf.threads\xjtf.threads.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

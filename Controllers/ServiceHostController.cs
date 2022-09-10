@@ -29,20 +29,21 @@ public class ServiceHostController : BaseController
                 .RunAsync((Command.InstallService, commandArgs))
                 .ContinueWith(async installServiceTask =>
                 {
+                    if (installServiceTask.Exception == null)
+                    {
                     var installServiceResponse = await installServiceTask;
-                    AuditServiceInstall(installServiceResponse, installRequest);
+                        AuditServiceInstall(installRequest);
                     return installServiceResponse;
+                    }
+                    return new JsonResult(new { error = installServiceTask.Exception.ToString() });
                 });
             return await result;
         }
         else return BadRequest();
     }
 
-    private void AuditServiceInstall(JsonResult installServiceResponse, InstallServiceRequest installRequest)
+    private void AuditServiceInstall(InstallServiceRequest installRequest)
     {
-        dynamic? responseData = installServiceResponse.Value;
-        if (responseData == null || responseData?.ServiceName == null) return;
-
         Auditor.LogEntry(AuditLogWriter, new AuditRecord()
         {
             Subject = AuditSubjectUser,
@@ -100,7 +101,7 @@ public static class InstallServiceExtension
             return new CommandArgs
             (
                 installRequest.ServiceName,
-                $"'{installFolder}{Path.DirectorySeparatorChar}{binaryPathName}'",
+                $"{installFolder}{Path.DirectorySeparatorChar}{binaryPathName}",
                 installRequest.DisplayName,
                 installRequest.Description,
                 installRequest.StartupType

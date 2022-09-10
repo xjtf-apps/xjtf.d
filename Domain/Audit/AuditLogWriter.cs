@@ -37,7 +37,10 @@ public sealed class AuditLogWriter
                     Source = item.Source
                 });
         }
-        dbContext.SaveChanges();
+        if (countToProcess > 0)
+        {
+            dbContext.SaveChanges();
+        }
     }
 
     public class QueableItem

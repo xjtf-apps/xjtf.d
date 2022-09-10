@@ -13,15 +13,10 @@ public class CommandRunner : ICommandResultTransformer
 
     public async Task<object> RunAsync((Command CommandType, CommandArgs CommandArguments)? CommandObject, ICommandResultTransformer? resultTransformer = null)
     {
-        using var shell = PowerShell.Create();
-        var cmd = CommandObject!.Value.CommandType;
+        var transformer = PrepareTransformerPipeline(resultTransformer);
         var args = CommandObject!.Value.CommandArguments;
-        var transformer =
-            (ICommandResultTransformer)this;
-            
-        if (resultTransformer != null)
-            transformer = ICommandResultTransformer.Composer(transformer, resultTransformer);
-
+        var cmd = CommandObject!.Value.CommandType;
+        using var shell = new CommandShell(cmd);
         TypeCheckArguments(cmd, args);
 
         if (CommandObject.Value.TryGenerateScript(out string script))
@@ -51,13 +46,23 @@ public class CommandRunner : ICommandResultTransformer
         throw new CommandRunnerException("Couldn't generate command script");
     }
 
+    private ICommandResultTransformer PrepareTransformerPipeline(ICommandResultTransformer? resultTransformer)
+    {
+        var transformer =
+            (ICommandResultTransformer)this;
+
+        return resultTransformer != null
+            ? ICommandResultTransformer.Composer(transformer, resultTransformer)
+            : transformer;
+    }
+
     private static void TypeCheckArguments(Command cmd, CommandArgs args)
     {
         var checkResult = CommandArgsType.Checks(cmd, args);
         if (checkResult.Failed)
             throw new CommandRunnerException(checkResult.Error!);
     }
-
+ 
     object ICommandResultTransformer.RunTransform(object commandResult)
     {
         var @this = ((ICommandResultTransformer)this);
