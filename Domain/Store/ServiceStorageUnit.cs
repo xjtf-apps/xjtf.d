@@ -21,6 +21,9 @@ public sealed partial class ServiceStore
             string SanitizePath(string path)
                 => path.Replace($"{InstallFolder}{Path.DirectorySeparatorChar}", "");
 
+            string GenerateFolderId(string path)
+                => Convert.ToBase64String(Encoding.UTF8.GetBytes(path));
+
             var enumOptions = new EnumerationOptions() { RecurseSubdirectories = true };
             return _storage.EnumerateFileSystemInfos("*", enumOptions)
             .Where(ServiceStoreExtensions.IsNotServiceTag_)
@@ -29,7 +32,9 @@ public sealed partial class ServiceStore
                 Name = fsi.Name,
                 Fullpath = SanitizePath(fsi.FullName),
                 Length = fsi is FileInfo fi ? fi.Length : -1,
-                Type = fsi is DirectoryInfo ? "directory" : "file"
+                Type = fsi is DirectoryInfo ? "directory" : "file",
+                ParentId = GenerateFolderId(Path.GetDirectoryName(fsi.FullName)!),
+                ChildrenId = fsi is DirectoryInfo ? GenerateFolderId(fsi.FullName) : null
             });
         }
 
