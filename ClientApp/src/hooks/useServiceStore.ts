@@ -30,7 +30,7 @@ export function useServiceStore(): ServiceStore {
       setState(current => ({ ...current, pinnedServices: [...current.pinnedServices, serviceName] }));
       await serverApi.pinService(serviceName);
     }
-  }, []);
+  }, [state.pinnedServices]);
 
   const isPinned = useCallback((serviceName: string) => {
     return state.pinnedServices.includes(serviceName);

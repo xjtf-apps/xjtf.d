@@ -4,9 +4,6 @@ import { WindowsService, WindowsServiceWithUptime } from '../types/service';
 // hostname
 const hostname = 'localhost:7052';
 
-// Simulate network delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
 export const serverApi = {
   async getServices(): Promise<WindowsService[]> {
     return fetch(`https://${hostname}/api/windowsservices`)
