@@ -1,3 +1,4 @@
+using xjtf.d.ui._2;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,8 @@ builder.Services.AddDbContext<XjtfDbContext>(options => {
     options.UseSqlite("Data Source=xjtf.db");
 });
 var app = builder.Build();
+
+EnsureCreated.DatabaseReady(app);
 
 // Fallback to `index.html` for React Router
 app.Use(async (context, next) =>
