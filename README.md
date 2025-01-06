@@ -15,6 +15,7 @@ A Windows Service Monitor
 
 - Download zip file, and unzip to install location
 - Run command to install as a Windows Service
+- Open the address in your browser: [http://localhost:7631/](http://localhost:7631/)
 
 ```powershell
 New-Service -Name "xjtf daemon" -BinaryPathName "path-to-app.exe" -StartupType "Automatic"
