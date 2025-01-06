@@ -7,7 +7,7 @@ public class ReadServiceWithUptime
 {
     public WindowsServiceWithUptimeDto? GetService(string serviceName, XjtfDbContext context, DateTime currentTime)
     {   
-        #if WINDOWS
+
         var service = ServiceController.GetServices().FirstOrDefault(s => s.ServiceName == serviceName);
         if (service == null) return null;
 
@@ -21,9 +21,6 @@ public class ReadServiceWithUptime
             Uptime = GetServiceUptime(serviceName, context, currentTime),
             DetailedUptime = GetServiceDetailedUptime(serviceName, context, currentTime)
         };
-        #else
-        return null;
-        #endif
     }
 
     private UptimeDto[] GetServiceDetailedUptime(string serviceName, XjtfDbContext context, DateTime currentTime)
@@ -125,7 +122,6 @@ public class ReadServiceWithUptime
 
     private string GetServiceDescription(string serviceName)
     {
-        #if WINDOWS
         try
         {
             // Query WMI for the service description
@@ -135,7 +131,7 @@ public class ReadServiceWithUptime
             {
                 foreach (var obj in collection)
                 {
-                    return obj["Description"]?.ToString();
+                    return obj["Description"]?.ToString() ?? string.Empty;
                 }
             }
         }
@@ -143,7 +139,6 @@ public class ReadServiceWithUptime
         {
             Console.WriteLine($"Error fetching description for {serviceName}: {ex.Message}");
         }
-        #endif
         return string.Empty;
     }
 }

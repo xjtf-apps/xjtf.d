@@ -6,7 +6,6 @@ public class ReadServices
 {
     public WindowsServiceDto[] GetServices()
     {
-        #if WINDOWS
         return ServiceController.GetServices().Select(s => new WindowsServiceDto
         {
             ServiceName = s.ServiceName,
@@ -16,8 +15,5 @@ public class ReadServices
             StartType = s.StartType.ToString()
             
         }).ToArray();
-        #else
-        return Array.Empty<ServiceController>();
-        #endif
     }
 }
