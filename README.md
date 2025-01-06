@@ -7,6 +7,7 @@ A Windows Service Monitor
 ![Xjtf.d Dashboard](https://i.imgur.com/nxSx0py.png)
 
 - monitor running and installed Windows services
+- see recent changes in service status
 - pin/unpin services
 - see weekly uptime and last 30 minutes uptime
 
