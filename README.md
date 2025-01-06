@@ -4,7 +4,7 @@ A Windows Service Monitor
 
 ## Overview
 
-![Xjtf.d Dashboard](https://imgur.com/nxSx0py)
+![Xjtf.d Dashboard](https://i.imgur.com/nxSx0py.png)
 
 - monitor running and installed Windows services
 - pin/unpin services
