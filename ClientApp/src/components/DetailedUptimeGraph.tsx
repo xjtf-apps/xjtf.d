@@ -30,7 +30,7 @@ export function DetailedUptimeGraph({ data, compact = false }: DetailedUptimeGra
         </div>
       </div>
       <div className="flex justify-between mt-2 text-xs text-gray-500">
-        <span>30 min ago</span>
+        <span>{data.length * 5 / 60} min ago</span>
         <span>now</span>
       </div>
     </div>
