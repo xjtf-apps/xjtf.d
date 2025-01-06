@@ -2,7 +2,7 @@ import { PinnedServices } from '../types/pinned-services';
 import { WindowsService, WindowsServiceWithUptime } from '../types/service';
 
 // hostname
-const hostname = 'localhost:7052';
+const hostname = 'localhost:7631';
 
 export const serverApi = {
   async getServices(): Promise<WindowsService[]> {
