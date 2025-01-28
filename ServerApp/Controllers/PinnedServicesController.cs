@@ -8,9 +8,9 @@ public class PinnedServicesController : ControllerBase
 {
     private readonly XjtfDbContext _context;
     private readonly ILogger<PinnedServicesController> _logger;
-    private readonly SetPinnedService _setPinnedService = new();
-    private readonly UnsetPinnedService _unsetPinnedService = new();
-    private readonly ReadPinnedServices _readPinnedServices = new();
+    private readonly Lazy<SetPinnedService> _setPinnedService = new();
+    private readonly Lazy<UnsetPinnedService> _unsetPinnedService = new();
+    private readonly Lazy<ReadPinnedServices> _readPinnedServices = new();
 
     public PinnedServicesController(ILogger<PinnedServicesController> logger, XjtfDbContext context)
     {
@@ -21,14 +21,14 @@ public class PinnedServicesController : ControllerBase
     [HttpGet]
     public PinnedServicesDto GetPinnedServices()
     {
-        return _readPinnedServices.GetPinnedServices(_context);
+        return _readPinnedServices.Value.GetPinnedServices(_context);
     }
 
     [HttpPut]
     [Route("pin/{serviceName}")]
     public void SetPinnedService(string serviceName)
     {
-        _setPinnedService.Set(_context, serviceName);
+        _setPinnedService.Value.Set(_context, serviceName);
         _logger.LogInformation($"Service {serviceName} pinned.");
     }
 
@@ -36,7 +36,7 @@ public class PinnedServicesController : ControllerBase
     [Route("unpin/{serviceName}")]
     public void UnsetPinnedService(string serviceName)
     {
-        _unsetPinnedService.Unset(_context, serviceName);
+        _unsetPinnedService.Value.Unset(_context, serviceName);
         _logger.LogInformation($"Service {serviceName} unpinned.");
     }
 }

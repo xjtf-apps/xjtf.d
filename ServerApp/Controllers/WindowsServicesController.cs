@@ -7,8 +7,8 @@ namespace xjtf.d.ui._2.Controllers;
 public class WindowsServicesController : ControllerBase
 {
     private readonly XjtfDbContext _context;
-    private readonly ReadServices _readServices = new();
-    private readonly ReadServiceWithUptime _readServiceWithUptime = new();
+    private readonly Lazy<ReadServices> _readServices = new();
+    private readonly Lazy<ReadServiceWithUptime> _readServiceWithUptime = new();
 
     public WindowsServicesController(XjtfDbContext context)
     {
@@ -18,13 +18,13 @@ public class WindowsServicesController : ControllerBase
     [HttpGet]
     public IEnumerable<WindowsServiceDto> Get()
     {
-        return _readServices.GetServices();
+        return _readServices.Value.GetServices();
     }
 
     [HttpGet]
     [Route("{serviceName}")]
     public WindowsServiceWithUptimeDto? Get(string serviceName)
     {
-        return _readServiceWithUptime.GetService(serviceName, _context, DateTime.Now);
+        return _readServiceWithUptime.Value.GetService(serviceName, _context, DateTime.Now);
     }
 }
